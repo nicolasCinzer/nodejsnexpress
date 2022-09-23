@@ -1,6 +1,7 @@
 const express = require("express");
-
 const app = express();
+
+app.use(express.json());
 
 let courses = [
   {
@@ -21,7 +22,7 @@ let courses = [
   },
 ];
 
-const resources = [
+let resources = [
   {
     id: "que-es-blockchain",
     topic: "Blockchain",
@@ -62,16 +63,29 @@ app.get("/api/resources", (req, res) => {
 
 app.get("/api/resources/:id", (req, res) => {
   const id = req.params.id;
-  console.log(id);
 
   let resource = resources.find((resource) => resource.id === id);
 
-  res.json(resource);
+  if (resources) {
+    res.json(resource);
+  } else {
+    res.status(404).end();
+  }
 });
 
 app.get("/api/courses", (req, res) => {
   res.json(courses);
 });
+
+app.delete("/api/resources/:id", (req, res) => {
+  const id = req.params.id;
+
+  resources = resources.filter((resource) => resource.id !== id);
+
+  res.status(204).end();
+});
+
+app.post("/api/resources", () => {});
 
 const PORT = 3000;
 app.listen(PORT, () => {
